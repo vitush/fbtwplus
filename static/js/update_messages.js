@@ -73,9 +73,9 @@ function processResult(messages) {
 				}	  					
 			}
 			} else {
-				li.innerHTML = "<dd><div class='alert alert-info'>
-                     <p>Please login to any account first<br>                   
-                     <small>To login click checkbox on right</small></p></div></dd>";
+				li.innerHTML = "<dd><div class='alert alert-info'>"+
+                     "<p>Please login to any account first<br>"+                   
+                     "<small>To login click checkbox on right</small></p></div></dd>";
                      
 			}
 			frag.appendChild(li);     	     	
