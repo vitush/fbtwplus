@@ -15,7 +15,7 @@ Run app:
  1. cd   fbtwplus/
  2. python manage.py runserver
 
-Access App:
+Use app:
   http://localhost.net:8000
 
 App will use current active FB and Twitter accounts or  ask for login if needed.
