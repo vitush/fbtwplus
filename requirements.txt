@@ -1,0 +1,3 @@
+pyfb
+python-twitter
+oauth2
