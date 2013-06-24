@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+  </head>
+  <head>
+    <meta charset="utf-8">
+    <title>Twitter plus FaceBook</title>
+
+    <!-- Le styles -->
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 10px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+
+
+  </head>
+
+
+  <body >
+    
+<div id="fb-root"></div>
+<script>
+window.fbAsyncInit = function()
+{
+FB.init
+({
+    appId   :   '147128408812779',
+    status :    true,
+    cookie :    true,
+    xfbml   :   true
+});
+};
+
+(function()
+{
+var e = document.createElement('script');
+e.src = document.location.protocol +  '//connect.facebook.net/en_US/all.js';
+e.async = true;
+document.getElementById('fb-root').appendChild(e);
+}());
+
+
+
+FB.login(function(response)
+{
+if(response.session)
+{
+    if(response.perms)
+    {
+        alert('yippee');
+    }
+    else
+    {
+        alert('oh no');
+    }
+}
+else
+{
+    alert('login silly');
+}
+}, {perms:'email,user_birthday'});
+
+
+</script>
+hello
+<fb:login-button></fb:login>
+
+
+   <hr>
+
+  <script>
+
+    var refresh_time = 10;
+    var curret_time  = new Date().valueOf();
+
+    var graphURL = "https://graph.facebook.com/{{facebook_user_id}}/posts?" +
+                     "callback=processResult&" +
+                     "since=" + (curret_time - refresh_time)
+                     "access_token={{facebook_access_token}}" ;
+
+    // Use JSONP to call the Graph API
+    function ReloadFacebookPosts() {
+      var script = document.createElement("script");
+      script.src = graphURL;
+      document.body.appendChild(script);
+ 
+    }
+
+    function processResult(posts) {
+      if (posts.data.length == 0) {
+        document.getElementById("loadMore").innerHTML =
+          "No more results";
+      }
+      else {
+       
+       posts.data[posts.data.length-1].created_time;
+
+        for (var post in posts.data) {
+          var message = document.createElement("div");
+          message.innerHTML = posts.data[post].message;
+          document.getElementById("content").appendChild(message);
+        }
+      }
+    }
+  </script>
+  <div id="content"></div>
+
+<button id="Reload" onclick="ReloadFacebookPosts()">Reload</button>
+<input type="button" onclick="clearInterval(timer)" value="Stop">
+<script>
+  var timer = setInterval(ReloadFacebookPosts(), 2000);
+</script>
+
+  <hr>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+
+        <div class="span9">
+          <div class="hero-unit" style="overflow: auto;" >
+
+        {% if messages %}
+            <ul>
+            {% for key,message in messages.items %}
+             {% if message.account == 'facebook' and  facebook_enabled %}
+                    <li>                      
+                    <img src="/static/images/facebook.png" alt="Facebook" width="16" height="16">                     
+                    {{ message.created }}&nbsp;:&nbsp;&nbsp;{{ message.text }}
+                    </li>
+                {% endif %}
+                {% if message.account == 'twitter' and  twitter_enabled %}
+                    <li>                      
+                    <img src="/static/images/twitter.jpg" alt="Twitter" width="16" height="16">
+                    {{ message.created }}&nbsp;:&nbsp;&nbsp;{{ message.text }}
+                    </li>
+                 {% endif %}
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Messages are available.</p>
+        {% endif %}
+
+          </div>
+     
+        </div><!--/span-->
+        <div class="span3">
+          <div class="well sidebar-nav" >
+
+            <ul class="nav nav-list">
+                <div class="navbar-inner">
+                    <form action="/facebook_login">
+                    <h4 class="form-signin-heading">
+                         <p class="text-info">
+                            <img src="/static/images/facebook.png" alt="Facebook" width="32" height="32">
+                            Facebook
+                           <input type="checkbox" name="facebook_checkbox"  onchange="this.form.submit()"  {% if facebook_enabled %} checked="checked" {% endif %} >
+                           <br>  {{facebook_user}}  
+                    </h4>
+                    </form>
+                </div>
+                <br> 
+                <div class="navbar-inner">
+                    <form action="/twitter_login">
+                    <h4 class="form-signin-heading">
+                        <p class="text-info">
+                        <img src="/static/images/twitter.jpg" alt="Twitter" width="32" height="32"> 
+                        Twitter                   
+                           <input type="checkbox" name="twitter_checkbox"  onchange="this.form.submit()" {% if twitter_enabled %} checked="checked" {% endif %} >
+                           <br>  {{twitter_user}} 
+                        </p>
+                    </h4>
+                    </form>
+                </div>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+      </div><!--/row-->
+        
+    <hr>
+      <footer>
+        <p>&copy; vitush 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+  </body>
+</html>
+
+
+

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+ <head>
+    <meta charset="utf-8">
+    <title>Twitter plus FaceBook</title>
+
+    <!-- Le styles -->
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+	 <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet" >
+    <style type="text/css">
+      body {
+        padding-top: 5px;
+        padding-bottom: 20px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+dl  {
+    width: 800px;
+}
+dl dt {
+    width: 30px;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+dl  dd {
+    width:  770px;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+      
+    </style>
+  </head>
+
+  <script src="/static/js/update_messages.js"></script>
+  
+  <body onload="loadMessages()">
+  
+  <script>
+      timet = setInterval( "loadMessages()" , 10000)
+  </script> 
+    
+
+
+ <div class="page-header alert alert-info well">
+     	<div class="row-fluid">
+			<div class="span2">
+ 
+				<img src="/static/images/facebook.png" alt="Twitter" width="32" height="32"> 
+				<img src="/static/images/plus.png" alt="Twitter" width="32" height="32">     
+				<img src="/static/images/twitter.png" alt="Twitter" width="32" height="32"> 		
+			</div>     
+			<div class="span10"> <h3>All messages in one place. <small id="last_refresh">Refreshed every 10 sec.<small> </h3> </div>     
+		</div>
+</div>
+
+
+  <hr>
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+
+        <div class="span9">
+        <div class="hero-unit" style="overflow: auto;" >
+        <div id="messages">
+            <dl  id="message_list">
+                {% if facebook_enabled or twitter_enabled %}
+                <dd><div class="alert alert-success">
+                    <p>Loading messages ... please wait</p></div></dd>
+                {% else %}
+                    <div class="alert alert-info">
+                     Please login to any account first<br>                   
+                     <small>To login click checkbox on right<small></span></p>
+                {% endif%}                
+            </dl>
+                        
+          </div> 
+          </div>
+
+
+        </div><!--/span-->
+        <div class="span3">
+          <div class="well sidebar-nav" >
+
+            <ul class="nav nav-list">
+                <div class="navbar-inner">
+                    <form action="/facebook_login">
+                    <h4 class="form-signin-heading">
+                         <p class="text-info">
+                        <img src="/static/images/facebook.png" alt="Facebook" width="32" height="32">
+                        Facebook
+                        <input  id='fbcb'  type="checkbox" name="facebook_checkbox"  onchange="this.form.submit()"  {% if facebook_enabled %} checked="checked" {% endif %} >
+                        <br>  {{facebook_user}}  
+                    </h4>
+                    </form>
+                </div>
+                <br> 
+                <div class="navbar-inner">
+                    <form action="/twitter_login">
+                    <h4 class="form-signin-heading">
+                        <p class="text-info">
+                        <img src="/static/images/twitter.png" alt="Twitter" width="32" height="32"> 
+                        Twitter                   
+                        <input id='twcb' type="checkbox" name="twitter_checkbox"  onchange="this.form.submit()" {% if twitter_enabled %} checked="checked" {% endif %} >
+                        <br>  {{twitter_user}} 
+                        </p>
+                    </h4>
+                    </form>
+                </div>
+                <br> 
+                 <input type="button" onclick="clearInterval(timer)" value="Stop Reloading">
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+      </div><!--/row-->
+        
+    <hr>
+      <footer>
+        <p>&copy; vitush 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+  </body>
+</html>
+
+
+

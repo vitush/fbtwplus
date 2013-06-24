@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+  </head>
+  <head>
+    <meta charset="utf-8">
+    <title>Twitter plus FaceBook</title>
+
+    <!-- Le styles -->
+    <link href="{{STATIC_URL}}/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 10px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
+
+
+  </head>
+  <body>
+    <div class="alert alert-info">
+        <h3  align="center">All your messages in one place</h3>
+    </div>
+
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+
+        <div class="span9">
+          <div class="hero-unit" style="overflow: auto;" >
+
+        {% if message_list %}
+            <ul>
+            {% for message in message_list %}
+                <li>{{ message.text }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No Messages are available.</p>
+        {% endif %}
+
+          </div>
+
+     
+        </div><!--/span-->
+        <div class="span3">
+          <div class="well sidebar-nav" >
+
+            <ul class="nav nav-list">
+                <div class="navbar-inner">
+                    <h4 class="form-signin-heading">
+                        <img src="static/images/facebook.png" alt="Facebook" width="32" height="32">
+                        <p class="text-info">Facebook</p>  
+                        <input type="checkbox" name="facebook" value="f"> 
+                    </h4>
+                       
+                    <input type="text" class="input-block-level" placeholder="Email address">
+                    <input type="password" class="input-block-level" placeholder="Password">
+                    <br>
+                </div>
+                <br> 
+                <div class="navbar-inner">
+                    <h4 class="form-signin-heading">
+                        <img src="static/images/twitter.jpg" alt="Twitter" width="32" height="32">                    
+                        <p class="text-info">Twitter</p>
+                        <input type="checkbox" name="twitter" value="t"> 
+                    </h4>
+ 
+                    
+                    <input type="text" class="input-block-level" placeholder="Email address">
+                    <input type="password" class="input-block-level" placeholder="Password">
+                    <br>
+                </div>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <footer>
+        <p>&copy; vitush 2013</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="../assets/js/jquery.js"></script>
+    <script src="../assets/js/bootstrap-transition.js"></script>
+    <script src="../assets/js/bootstrap-alert.js"></script>
+    <script src="../assets/js/bootstrap-modal.js"></script>
+    <script src="../assets/js/bootstrap-dropdown.js"></script>
+    <script src="../assets/js/bootstrap-scrollspy.js"></script>
+    <script src="../assets/js/bootstrap-tab.js"></script>
+    <script src="../assets/js/bootstrap-tooltip.js"></script>
+    <script src="../assets/js/bootstrap-popover.js"></script>
+    <script src="../assets/js/bootstrap-button.js"></script>
+    <script src="../assets/js/bootstrap-collapse.js"></script>
+    <script src="../assets/js/bootstrap-carousel.js"></script>
+    <script src="../assets/js/bootstrap-typeahead.js"></script>
+
+  </body>
+</html>
+
+
+
