@@ -51,34 +51,41 @@ function processResult(messages) {
 	if ( message_list ){
 			var frag = document.createDocumentFragment();
 			var li;
-			if (messages){
+
+			console.log("Object.keys(messages).length = " + Object.keys(messages).length)
+			if (Object.keys(messages).length == 0) {			
+				li = document.createElement("dl");
+				
+				li.innerHTML = "<dt> &nbsp; </dt><dd><div class='alert alert-info'>"+
+                     "<p>Please login to any account first<br>"+                   
+                     "<small>To login click checkbox on right</small></p></div></dd>";
+				frag.appendChild(li);     	     	
+				
+			} else {
  			for (m in messages){
 				li = document.createElement("dl");
 				li.id = m;
 				li.innerHTML = ""
-				
+
 				msgDate = getDateFromUnix(getTimeFromId((m)));
 				if (msgDate0 != msgDate){
 				li.innerHTML = "<dt> &nbsp; </dt><dd><br><center><b>"+msgDate+"</b></center></dd>";
               					 msgDate0 = msgDate;
-	
+
 				}				
-																	
+
 				if (messages[m].account == 'facebook' && document.getElementById("fbcb").checked ) {
 				li.innerHTML = li.innerHTML + "<dt><i class='icon-facebook'></i></dt>" +
               "<dd>[ " + getTimeFromUnix(getTimeFromId((m))) + " ] : <font color='#008000'>"+messages[m].text+"</font> </dd>";				
 				}else if (messages[m].account == 'twitter' && document.getElementById("twcb").checked) {
 				li.innerHTML = li.innerHTML + "<dt><i class='icon-twitter'></i></dt>" +
               "<dd>[ " + getTimeFromUnix(getTimeFromId((m))) + " ] : <font color='#0000FF'>"+messages[m].text+"</font> </dd>";				
+				}else {
+					li.innerHTML = ""
 				}	  					
-			}
-			} else {
-				li.innerHTML = "<dd><div class='alert alert-info'>"+
-                     "<p>Please login to any account first<br>"+                   
-                     "<small>To login click checkbox on right</small></p></div></dd>";
-                     
-			}
-			frag.appendChild(li);     	     	
+				frag.appendChild(li);     	     	
+			}}
+			
 		   removeMessages();
    		message_list.appendChild(frag); 
    		removeNewData();

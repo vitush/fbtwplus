@@ -143,7 +143,14 @@ def reloadmessages(request):
 
 def sortedMessages(messages):
     if  (messages != None):
-         return OrderedDict(sorted(messages.items(), key=lambda t: t[0],reverse=True))   
+        messages1 = {};
+        for k, v in messages.items():
+             if k[-1] == 'f' and  facebook_enabled:
+                 messages1[k] = v
+             if k[-1] == 't' and  twitter_enabled:
+                 messages1[k] = v
+             
+        return OrderedDict(sorted(messages1.items(), key=lambda t: t[0],reverse=True))   
         
 
 def index(request):       
@@ -194,8 +201,11 @@ def facebook_login(request):
     if fb_check == None :
         facebook_enabled = False;
         return HttpResponseRedirect("/")
-    
-    facebook_enabled = True
+    else:
+        if fb_check == 'on':
+            facebook_enabled = True
+        else:
+            facebook_enabled = True
 
     if facebook_access_token != None:        
         return HttpResponseRedirect("/")
@@ -223,9 +233,17 @@ def twitter_login(request):
     global twitter_enabled
     
     tw_check = request.GET.get('twitter_checkbox')  
+    print "tw_check = %s" % tw_check
     if tw_check == None :
         twitter_enabled = False
         return HttpResponseRedirect("/")
+    else:
+        if tw_check == 'on':
+            twitter_enabled = True
+        else:
+            twitter_enabled = False
+
+
 
     twitter_enabled = True
     
