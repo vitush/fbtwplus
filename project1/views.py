@@ -62,6 +62,9 @@ def get_extended_at(short_lived_access_token):
 def twitterLoadMessages(user):
     global twitter_loaded
 
+    if (not twitter_enabled):
+        return False
+
     if twitter_api == None:
         return False
         
@@ -91,6 +94,8 @@ def facebookLoadMessages(user_id):
     global messages_list
     global facebook_loaded
 
+    if (not facebook_enabled):
+        return False
         
     url = 'https://graph.facebook.com/%s/posts?access_token=%s' % (user_id,facebook_access_token)
     req = urllib2.Request(url)
