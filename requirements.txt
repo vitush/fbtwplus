@@ -1,3 +1,4 @@
 pyfb
 python-twitter
 oauth2
+django
