@@ -81,7 +81,12 @@ def twitterLoadMessages(user):
             record = {'account': "twitter", 
                       'created': created.ctime(), 
                       'text':s.text  }
-                    
+            
+            if s.AsDict().has_key('urls'):
+                for k,v in s.AsDict()['urls'].items():
+                    record['picture'] = v
+                    break
+                
             messages[ record_key ] = record        
             msg_count = msg_count +1
                 
@@ -104,7 +109,10 @@ def facebookLoadMessages(user_id):
      
     page = response.read() 
     fb_data =  json.loads(page)
+       
     response.close()
+    
+    
     
     msg_count = 0
     for msg in fb_data['data']:
@@ -119,11 +127,14 @@ def facebookLoadMessages(user_id):
         record = {'account': "facebook", 
                   'created': to_ctime(msg['created_time']), 
                   'text':text  }                
+
+        if msg.has_key('picture'):
+            record['picture'] = msg['picture']             
+                         
         messages[ record_key ] = record        
         msg_count = msg_count +1
     print "Facebook : %i messages loaded." %msg_count
     
-        
     facebook_loaded = True
     
     
@@ -135,6 +146,9 @@ def reloadmessages(request):
     
     callback = request.GET.get('callback')
     msgs = json.dumps(sortedMessages(messages))
+    
+    debug_msgs = json.dumps(sortedMessages(messages),indent=2)
+    print debug_msgs
     
     if callback:
         data = '%s(%s)' % (callback, msgs)
@@ -290,6 +304,7 @@ def twitter_login_success(request):
     #    return HttpResponse('Your Twitter Access Token key: %s\nAccess Token secret: %s' % (twitter_access_token['oauth_token'],twitter_access_token['oauth_token_secret']))
     print ('Your Twitter Access Token key: %s\r\n Access Token secret: %s' % (twitter_access_token['oauth_token'],twitter_access_token['oauth_token_secret']))
 
+ 
     twitter_api = twitter.Api(consumer_key=TWITTER_CUSTOMER_KEY,
                       consumer_secret=TWITTER_CUSTOMER_SECRET, 
                       access_token_key=twitter_access_token['oauth_token'],

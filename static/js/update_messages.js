@@ -14,7 +14,6 @@ function removeNewData(){
 }
  
 function loadMessages() {
-	 console.log("->loadMessages");
 	 var graphURL = "http://localhost.net:8000/messages?callback=processResult"
     var script = document.createElement("script");
     script.src = graphURL;
@@ -44,53 +43,61 @@ function getTimeFromUnix(timestamp){
  return '' + (h<=9 ? '0' + h : h) + ':' + (m <= 9 ? '0' + m : m); 
  }
 
+
+function format_messages(messages){
+	var frag = document.createDocumentFragment();   
+
+	if (Object.keys(messages).length == 0) {
+		di = document.createElement("div");			
+		di.innerHTML = "\t\t\t<div class='alert alert-info'>\n"+
+                     "\t\t\t<p>Please login to any account first<br>\n"+                   
+                     "\t\t\t<small>To login click checkbox on right</small></p></div>\n";
+		frag.appendChild(di);
+	
+	} else {
+		ta = document.createElement("table");
+		ta.with = "100%";
+		ta.class = "table"
+		msgDate0 = getDateFromUnix(new Date().getDate()/1000)
+		tt = ""			
+ 		for (m in messages){
+ 			 
+ 			 if (messages[m].account == 'facebook' && ! document.getElementById("fbcb").checked ) continue;
+ 			 if (messages[m].account == 'twitter' && ! document.getElementById("twcb").checked ) continue;
+
+			 message_image = (messages[m].picture ? "<img   width='128' height='128' src='" + messages[m].picture + "'></img>" :"&nbsp;") 			 
+ 			
+ 			 
+ 			 tt = tt + 
+ 			 "\t\t\t<tr class='navbar-inner' align='left' valign='top'>\n" +
+				"\t\t\t\t<td width='20'><i class='icon-"+messages[m].account+"'></i>" +
+				"\t\t\t\t<td width='60'>" + getTimeFromUnix(getTimeFromId((m))) + " : </td>\n" +
+      		"\t\t\t\t<td width='128'>"+ message_image+"</td>\n" +
+      		"\t\t\t\t<td style='font-size: 120%;'> "+messages[m].text+" </td>\n" + 			 
+			 "\t\t\t</tr>\n"; 			 
+	   }
+		ta.innerHTML = tt
+		frag.appendChild(ta);
+	}
+	return frag 
+		
+}
+ 
 function processResult(messages) {	
-	console.log("->processResult");
+	console.log("->processResult : " + Object.keys(messages).length + " messages");
 	var message_list = document.getElementById("message_list");
-	msgDate0 = getDateFromUnix(new Date().getDate()/1000)
+	
 	if ( message_list ){
-			var frag = document.createDocumentFragment();
-			var li;
-
-			console.log("Object.keys(messages).length = " + Object.keys(messages).length)
-			if (Object.keys(messages).length == 0) {			
-				li = document.createElement("dl");
-				
-				li.innerHTML = "<dt> &nbsp; </dt><dd><div class='alert alert-info'>"+
-                     "<p>Please login to any account first<br>"+                   
-                     "<small>To login click checkbox on right</small></p></div></dd>";
-				frag.appendChild(li);     	     	
-				
-			} else {
- 			for (m in messages){
-				li = document.createElement("dl");
-				li.id = m;
-				li.innerHTML = ""
-
-				msgDate = getDateFromUnix(getTimeFromId((m)));
-				if (msgDate0 != msgDate){
-				li.innerHTML = "<dt> &nbsp; </dt><dd><br><center><b>"+msgDate+"</b></center></dd>";
-              					 msgDate0 = msgDate;
-
-				}				
-
-				if (messages[m].account == 'facebook' && document.getElementById("fbcb").checked ) {
-				li.innerHTML = li.innerHTML + "<dt><i class='icon-facebook'></i></dt>" +
-              "<dd>[ " + getTimeFromUnix(getTimeFromId((m))) + " ] : <font color='#008000'>"+messages[m].text+"</font> </dd>";				
-				}else if (messages[m].account == 'twitter' && document.getElementById("twcb").checked) {
-				li.innerHTML = li.innerHTML + "<dt><i class='icon-twitter'></i></dt>" +
-              "<dd>[ " + getTimeFromUnix(getTimeFromId((m))) + " ] : <font color='#0000FF'>"+messages[m].text+"</font> </dd>";				
-				}else {
-					li.innerHTML = ""
-				}	  					
-				frag.appendChild(li);     	     	
-			}}
 			
-		   removeMessages();
-   		message_list.appendChild(frag); 
-   		removeNewData();
+		frag = format_messages(messages);
+		removeMessages();
+   	message_list.appendChild(frag); 
+   	removeNewData();			
+			
+							
 	}
 }
+
 
 //   -->
 	
