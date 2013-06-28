@@ -75,6 +75,7 @@ def twitterLoadMessages(user):
     try :                
         statuses =  twitter_api.GetUserTimeline(user)
         for s in statuses:
+                        
             created = datetime.datetime.fromtimestamp(s.GetCreatedAtInSeconds())
             
             record_key = str(s.GetCreatedAtInSeconds()) + "t"
@@ -84,7 +85,9 @@ def twitterLoadMessages(user):
             
             if s.AsDict().has_key('urls'):
                 for k,v in s.AsDict()['urls'].items():
+    
                     record['picture'] = v
+                    record['link'] = v
                     break
                 
             messages[ record_key ] = record        
@@ -105,10 +108,17 @@ def facebookLoadMessages(user_id):
     url = 'https://graph.facebook.com/%s/posts?access_token=%s' % (user_id,facebook_access_token)
     req = urllib2.Request(url)
     
-    response = urllib2.urlopen(req)
-     
+    try:
+        response = urllib2.urlopen(req)
+    except ValueError:
+        print "Connection Error - Cannot Load data from facebook "
+        return False                
+    
+    
     page = response.read() 
     fb_data =  json.loads(page)
+    
+    #print  json.dumps(fb_data,indent=2)
        
     response.close()
     
@@ -128,8 +138,19 @@ def facebookLoadMessages(user_id):
                   'created': to_ctime(msg['created_time']), 
                   'text':text  }                
 
+        if msg.has_key('link'):
+            record['link'] = msg['link']             
+
         if msg.has_key('picture'):
             record['picture'] = msg['picture']             
+
+        if msg.has_key('name'):
+            record['name'] = msg['name']        
+            
+        if msg.has_key('description'):
+            record['description'] = msg['description']        
+            
+            
                          
         messages[ record_key ] = record        
         msg_count = msg_count +1
@@ -147,8 +168,8 @@ def reloadmessages(request):
     callback = request.GET.get('callback')
     msgs = json.dumps(sortedMessages(messages))
     
-    debug_msgs = json.dumps(sortedMessages(messages),indent=2)
-    print debug_msgs
+    #debug_msgs = json.dumps(sortedMessages(messages),indent=2)
+    #print debug_msgs
     
     if callback:
         data = '%s(%s)' % (callback, msgs)
