@@ -58,19 +58,6 @@ line = s+ "<tr  align='center' class='navbar-inner '><td>\n" +
 
  
  
-
-function getIMG(url) {
- var image = new Image();
- image.onerror = function (immage) {
-   console.log('error loading ' + this.src);
-	image.src = null;
- };
- image.src = url;
- 
- if (image.complete)  return "<img width='128' height='128' src='" +url + "'</img>";
- return "";
- }	
-
 	
 function format_msg_line(message,id){
 
@@ -79,10 +66,6 @@ message_text = message.text ;
 message_time = getTimeFromUnix(getTimeFromId((m)));
 message_description  = (message.description ? message.description :"")
 message_name  = (message.name  ? message.name :"")
-//message_picture  = (message.picture ? getIMG(message.picture): "" ) 		
- 
- 
- 
  
 	 
 s = "\t\t\t";
@@ -94,12 +77,7 @@ line = s+ "<tr align='left' valign='top ' class='navbar-inner'><td>\n" +
 		if (message.link) {
 			s2 = "\t\t\t\t\t\t";
 
-			sub_msg = "<table  align='left'><tr align='left'> \n";
-
-			//if (message_picture != ""){
-	      //   sub_msg = sub_msg +"          <td width='130' >"  + "<a href='" + message.link + "'>" + message_picture +"</a></td>\n";
-			//}
-
+			sub_msg = "<table  align='left'><tr align='left'> \n"; 
 	      sub_msg = sub_msg +"          <td width='130' >"  + "<a  id='img_"+id+"' href='" + message.link + "'></a></td>\n";
 			
 			if (message_name != "" || message_description != "" ){
@@ -179,16 +157,12 @@ function format_messages(messages){
 function  loadImageCallback(image,parent_id) {
 	a = document.getElementById(parent_id);
  		 
- 	if (a) {
- 		a.appendChild(image);
- 		//console.log("To "+parent_id+" added " + image.src)
- 	}
+ 	if (a) a.appendChild(image);
 }
 
 
 function  loadImage(url,parent_id,callback) {
-			console.log("->loadImage (url,parent_id,callback) : " + url + ","+ parent_id )
-			var image = new Image();
+		 	var image = new Image();
  			image.onerror = function () {
  		 		console.log('error loading ' + this.src);
  			};
@@ -197,16 +171,15 @@ function  loadImage(url,parent_id,callback) {
 				callback(this,parent_id)
  			};
  			image.src = url;
-
- 			
+		
 }
 
 
 function  loadImages(messages) {
-	console.log("->load_images")
+ 
 	for (m in messages){
 		if (messages[m].picture){
- 			console.log(" messages["+m+"].picture =" + messages[m].picture)
+ 	 
  			parent_id = "img_" + m;
 			loadImage(messages[m].picture,parent_id,loadImageCallback);
 			
@@ -215,7 +188,7 @@ function  loadImages(messages) {
 }
  
 function processResult(messages) {	
-	console.log("->processResult : " + Object.keys(messages).length + " messages");
+ 
 	var message_list = document.getElementById("message_list");
 	
 
