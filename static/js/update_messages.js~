@@ -67,19 +67,20 @@ function getIMG(url) {
  };
  image.src = url;
  
- if (image.complete)  return "<img class='img-circle' width='128' height='128' src='" +url + "'</img>";
+ if (image.complete)  return "<img width='128' height='128' src='" +url + "'</img>";
  return "";
  }	
 
 	
-function format_msg_line(message){
+function format_msg_line(message,id){
 
 message_account = message.account ;	 
 message_text = message.text ;
 message_time = getTimeFromUnix(getTimeFromId((m)));
 message_description  = (message.description ? message.description :"")
 message_name  = (message.name  ? message.name :"")
-message_picture  = (message.picture ? getIMG(message.picture): "" ) 		
+//message_picture  = (message.picture ? getIMG(message.picture): "" ) 		
+ 
  
  
  
@@ -95,9 +96,12 @@ line = s+ "<tr align='left' valign='top ' class='navbar-inner'><td>\n" +
 
 			sub_msg = "<table  align='left'><tr align='left'> \n";
 
-			if (message_picture != ""){
-	         sub_msg = sub_msg +"          <td width='130' >"  + "<a href='" + message.link + "'>" + message_picture +"</a></td>\n";
-			}
+			//if (message_picture != ""){
+	      //   sub_msg = sub_msg +"          <td width='130' >"  + "<a href='" + message.link + "'>" + message_picture +"</a></td>\n";
+			//}
+
+	      sub_msg = sub_msg +"          <td width='130' id='img_"+id+"'>"  + "<a href='" + message.link + "'> &nbsp; </a></td>\n";
+			
 			if (message_name != "" || message_description != "" ){
 	         sub_msg = sub_msg +"          <td>"
 	         if (message_name != "") sub_msg = sub_msg + "<b>" + "<a href='" + message.link + "'>" + message_name + "</a></b><br>\n"; 
@@ -108,7 +112,9 @@ line = s+ "<tr align='left' valign='top ' class='navbar-inner'><td>\n" +
 			}
          sub_msg = sub_msg +" </tr></table>\n";
             
-         if (message_picture != "" || message_name != "" || message_description != ""  ){
+ 
+   
+         if ( message.picture || message_name != "" || message_description != ""  ){
 				line = line +
 				s2+"<div class='row-fluid'>\n" +
 				s2+ "\t<div class='span11 offset1'>\n" +
@@ -126,6 +132,7 @@ line = line +
 		s+ "\t</div>\n" +
 		s+ "</td></tr>\n\n"  ;
 
+ 
    return line;
 }
 
@@ -147,6 +154,8 @@ function format_messages(messages){
 		tt = ""			
  		for (m in messages){
 
+ 
+	
 			 message_account = messages[m].account ;	 
  			 if (message_account == 'facebook' && ! document.getElementById("fbcb").checked ) continue;
  			 if (message_account == 'twitter' && ! document.getElementById("twcb").checked ) continue;
@@ -157,7 +166,7 @@ function format_messages(messages){
 				 msgDate0 = message_date;			 
 			 }			 
 			 
-			 tt = tt + format_msg_line(messages[m]);
+			 tt = tt + format_msg_line(messages[m],m);
 			 
 	   }
 		ta.innerHTML = tt
@@ -166,16 +175,56 @@ function format_messages(messages){
 	return frag 
 		
 }
+
+function  loadImageCallback(image,parent_id) {
+	td = document.getElementById(parent_id);
+ 		 
+ 	if (td) {
+ 		td.appendChild(image);
+ 		console.log("To "+parent_id+" added " + image.src)
+ 	}
+}
+
+
+function  loadImage(url,parent_id,callback) {
+			console.log("->loadImage (url,parent_id,callback) : " + url + ","+ parent_id+","+ callback )
+			var image = new Image();
+ 			image.onerror = function () {
+ 		 		console.log('error loading ' + this.src);
+ 			};
+ 			
+ 			image.onload = function () {
+				callback(this,parent_id)
+ 			};
+ 			image.src = url;
+
+ 			
+}
+
+
+function  loadImages(messages) {
+	console.log("->load_images")
+	for (m in messages){
+		if (messages[m].picture){
+ 			console.log(" messages["+m+"].picture =" + messages[m].picture)
+ 			parent_id = "img_" + m;
+			loadImage(messages[m].picture,parent_id,loadImageCallback);
+			
+		}
+	}	
+}
  
 function processResult(messages) {	
 	console.log("->processResult : " + Object.keys(messages).length + " messages");
 	var message_list = document.getElementById("message_list");
 	
+
 	if ( message_list ){
 			
 		frag = format_messages(messages);
 		removeMessages();
-   	message_list.appendChild(frag); 
+   	message_list.appendChild(frag);
+   	loadImages(messages); 
    	removeNewData();			
 			
 							

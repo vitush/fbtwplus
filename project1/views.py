@@ -105,6 +105,7 @@ def facebookLoadMessages(user_id):
     if (not facebook_enabled):
         return False
         
+    print "facebook_access_token=%s" % facebook_access_token
     url = 'https://graph.facebook.com/%s/posts?access_token=%s' % (user_id,facebook_access_token)
     req = urllib2.Request(url)
     
@@ -132,12 +133,21 @@ def facebookLoadMessages(user_id):
             
         if msg.has_key('message') :
             text = msg['message']
-        
+             
         record_key = str(to_timestamp(msg['created_time']))+"f"
         record = {'account': "facebook", 
                   'created': to_ctime(msg['created_time']), 
                   'text':text  }                
 
+        if text.find(" likes a photo")  >= 0  :
+            print  "-"*42
+            print  json.dumps(msg,indent=2)
+            
+            pic_id = msg['id'][ msg['id'].find("_")+1:]
+            print ' msg[id].find("_")  =  %s' %  msg['id'].find("_")
+            print 'pic_id =  %s' %  pic_id
+            record['picture'] = "https://www.facebook.com/%s/posts/%s" % (user_id,pic_id) 
+        
         if msg.has_key('link'):
             record['link'] = msg['link']             
 
@@ -168,8 +178,8 @@ def reloadmessages(request):
     callback = request.GET.get('callback')
     msgs = json.dumps(sortedMessages(messages))
     
-    #debug_msgs = json.dumps(sortedMessages(messages),indent=2)
-    #print debug_msgs
+   #debug_msgs = json.dumps(sortedMessages(messages),indent=2)
+   # print debug_msgs
     
     if callback:
         data = '%s(%s)' % (callback, msgs)
