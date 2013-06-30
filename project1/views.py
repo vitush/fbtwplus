@@ -139,8 +139,13 @@ def facebookLoadMessages(user_id):
                   'created': to_ctime(msg['created_time']), 
                   'text':text  }                
 
-        #if text.find(" likes a photo")  >= 0  :
-        #    record['picture'] = "https://www.facebook.com/%s/posts/%s" % (user_id,pic_id) 
+        #if text.find("friends")  >= 0  :
+        #    print  json.dumps(msg,indent=2)
+                
+        if text.find(" likes")  >= 0  :
+            pic_id = msg['id'][ msg['id'].find("_")+1:]
+            record['description'] = "https://www.facebook.com/%s/posts/%s" % (user_id,pic_id) 
+            record['link'] = "https://www.facebook.com/%s/posts/%s" % (user_id,pic_id) 
         
         if msg.has_key('link'):
             record['link'] = msg['link']             
