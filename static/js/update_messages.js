@@ -100,7 +100,7 @@ line = s+ "<tr align='left' valign='top ' class='navbar-inner'><td>\n" +
 	      //   sub_msg = sub_msg +"          <td width='130' >"  + "<a href='" + message.link + "'>" + message_picture +"</a></td>\n";
 			//}
 
-	      sub_msg = sub_msg +"          <td width='130' id='img_"+id+"'>"  + "<a href='" + message.link + "'> &nbsp; </a></td>\n";
+	      sub_msg = sub_msg +"          <td width='130' >"  + "<a  id='img_"+id+"' href='" + message.link + "'></a></td>\n";
 			
 			if (message_name != "" || message_description != "" ){
 	         sub_msg = sub_msg +"          <td>"
@@ -177,11 +177,11 @@ function format_messages(messages){
 }
 
 function  loadImageCallback(image,parent_id) {
-	td = document.getElementById(parent_id);
+	a = document.getElementById(parent_id);
  		 
- 	if (td) {
- 		td.appendChild(image);
- 		console.log("To "+parent_id+" added " + image.src)
+ 	if (a) {
+ 		a.appendChild(image);
+ 		//console.log("To "+parent_id+" added " + image.src)
  	}
 }
 
