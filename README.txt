@@ -1,5 +1,5 @@
 fbtwplus -  Demo of authorization via Facebook and Twitter and reading of posts.  
-            python and django is used
+            python and django is used.
 
 ========
 
