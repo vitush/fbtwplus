@@ -1,5 +1,9 @@
-fbtwplus
+fbtwplus -  Demo of authorization via Facebook and Twitter and reading of posts.  
+            python and django is used
+
 ========
+
+Python 2.7 requered! 
 
 Install requirements:
 
