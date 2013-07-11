@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-      Wrapper for Twitter API
+    FacebookAccount - Wrapper for Facebook API.
+    
+        Authorization process:
+            1) Use get_auth_url() to get Authorization URL on Facebook.
+            2) Load auth. URL (in browser. etc) to get auth CODE
+            3) set returned CODE. using set_auth_code()
+            4) request access-token using request_access_token()
+        
+        Usage: 
+            1) use load_messages() to load messages/posts from Facebook 
+                       
 """
 import json
 import urllib2
@@ -30,7 +40,7 @@ def to_ctime(fb_date):
 
 
 class FacebookAccount():
-    """Wrapper for facebook API"""
+    """Wrapper for facebook API  """
     
     def __init__(self):
         self.user = None
@@ -40,7 +50,7 @@ class FacebookAccount():
         self._auth_code = None
 
     def is_authorized(self):
-        """Check if authorized via FB"""
+        """Check if alreade authorized via FB"""
         if self._access_token is None:
             return False
         return True
@@ -95,47 +105,54 @@ class FacebookAccount():
         try:
             response = urllib2.urlopen(req)
         except ValueError:
-            print "Connection Error - Cannot Load data from facebook "
+            print "Connection Error - Cannot load data from Facebook "
             return False
-
+        
+        # load data to json
         page = response.read()
         fb_data = json.loads(page)
         # print  json.dumps(fb_data,indent=2)
         response.close()
 
+        # Parse loaded data
         msg_count = 0
         for msg in fb_data['data']:
-            text = '' # Text to be will be shown on page 
+            text = '' 
+            
+            # if 'story' field found use it  as a main text to be shown
             if 'story' in msg:
                 text = msg['story']
-            if 'message' in msg:
+                
+            # Use text from 'message field as a text instead of 'story'
+            # if 'message' field exist
+            if 'message' in msg: # 
                 text = msg['message']
-
+            
+            # create a new message key from timestamp + 'f' 
+            # where 'f' is added to be unique ('f' means - facebook)
             record_key = str(to_timestamp(msg['created_time'])) + "f"
+            
+            # fill out  message with data 
             record = {'account': "facebook",
                       'created': to_ctime(msg['created_time']),
-                      'text': text}
-                      
-            # Additionally parse url if this is 'like'-message  
+                      'text': text}                      
             if text.find(" likes") >= 0:
-                pic_id = msg['id'][msg['id'].find("_") + 1:]
+                # Additionally parse url if this is 'like'-message  
+                picture_id = msg['id'][msg['id'].find("_") + 1:]
                 record['description'] = FB_POST_URL % (
-                                            self._user_id, pic_id)
+                                            self._user_id, picture_id)
                 record['link'] = FB_POST_URL % (
-                                            self._user_id, pic_id)
-
+                                            self._user_id, picture_id)
             if 'link' in msg:
                 record['link'] = msg['link']
-
             if 'picture' in msg:
                 record['picture'] = msg['picture']
-
             if 'name' in msg:
                 record['name'] = msg['name']
-
             if 'description' in msg:
                 record['description'] = msg['description']
 
+            # Add new message 
             messages[record_key] = record
             msg_count = msg_count + 1
         print "Facebook : %i messages loaded." % msg_count

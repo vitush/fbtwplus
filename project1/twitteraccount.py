@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-    Wrapper for Twitter API
+
+    TwitterAccount - Wrapper for Twitter API.
+    
+        Authorization process:
+            1) Use get_auth_url() to get Authorization URL on Twitter.
+            2) Load auth. URL (in browser. etc) to get  oauth-verifier
+            3) save returned  oauth-verifier using set_oauth_verifier()
+            4) request access-token using request_access_token()
+        
+        Usage: 
+            1) use load_messages() to load messages/posts from Twitter 
+                       
+
 """
 import oauth2 as oauth
 from urlparse import parse_qsl
@@ -29,7 +41,7 @@ class TwitterAccount():
         self.user = None
 
     def get_auth_url(self):
-        """Connect to twitter account"""
+        """Get auth. URL to connect to twitter"""
         oauth_client = oauth.Client(self._oauth_consumer)
         resp, content = oauth_client.request(TWITTER_REQUEST_TOKEN_URL, 'GET')
 
@@ -47,7 +59,7 @@ class TwitterAccount():
         return True, self._auth_url
 
     def _load_user_info(self):
-        """Get out user info"""
+        """Load user information"""
         if self._api is None:
             return False
         try:
@@ -63,7 +75,7 @@ class TwitterAccount():
         self._oauth_token.set_verifier(twitter_oauth_verifier)
 
     def request_access_token(self):
-        """Request access token"""
+        """Request access token from Twitter"""
         oauth_client = oauth.Client(self._oauth_consumer, self._oauth_token)
         body = 'oauth_callback=oob&oauth_verifier=%s' % self._oauth_verifier
         resp, content = oauth_client.request(
@@ -88,7 +100,7 @@ class TwitterAccount():
         return None
 
     def is_authorized(self):
-        """Check if authorized via Twitter"""
+        """Check if already authorized via Twitter"""
         if self._api is None:
             return False
         return True
@@ -100,12 +112,12 @@ class TwitterAccount():
         if self.user is None:
             if not self._load_user_info():
                 return False
-
+        
+        # Load and parse messages/posts 
         msg_count = 0
         try:
             statuses = self._api.GetUserTimeline(self.user)
             for status in statuses:
-
                 created = datetime.datetime.fromtimestamp(
                     status.GetCreatedAtInSeconds())
 
